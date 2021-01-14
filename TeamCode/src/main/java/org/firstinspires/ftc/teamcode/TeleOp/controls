@@ -1,0 +1,30 @@
+Gamepad 1
+
+
+left stick y-axis  = drivetrain forward and back
+           x-axis  = drivetrain strafe left and right
+right stick x-axis = turn left and right
+
+right trigger    = if you hold down right trigger while driving you will go into a slowmode once released you got back to full speed
+
+
+Gamepad 2
+
+a
+b
+x
+y
+
+d-up    = wobble arm moves up
+d-down  = wobble arm moves down
+d-left  = wobble arm opens
+d-right = wobble arm closes
+
+left-bump    =
+right-bump   =
+
+left-trigger    =  intake in
+right-trigger   = intake out (reverse)
+
+left stick    = outtake wheels
+right stick   =
