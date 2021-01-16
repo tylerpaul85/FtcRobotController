@@ -110,21 +110,18 @@ public class Drive_TeleOp extends OpMode {
     @Override
     public void loop() {
 
-        double speed = Math.sqrt(2) * Math.pow(Math.pow(gamepad1.left_stick_x, 4) + Math.pow(gamepad1.left_stick_y, 4), 0.5);
+        double speed = Math.sqrt(2) * Math.pow(Math.pow(gamepad1.left_stick_x, 4) + Math.pow(-gamepad1.left_stick_y, 4), 0.5);
         double angle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x);
         double rotation = Math.signum(gamepad1.right_stick_x) * Math.pow(gamepad1.right_stick_x, 2);
 
         float primaryDiagonalSpeed = (float) (speed * Math.sin(angle - (Math.PI / 4.0)));
         float secondaryDiagonalSpeed = (float) (speed * Math.cos(angle - (Math.PI / 4.0)));
 
-//        BlMotor.setPower(secondaryDiagonalSpeed - rotation);
-//        FrMotor.setPower(secondaryDiagonalSpeed + rotation);
-//        FlMotor.setPower(primaryDiagonalSpeed - rotation);
-//        BrMotor.setPower(primaryDiagonalSpeed + rotation);
-        BlMotor.setPower(secondaryDiagonalSpeed + rotation);
-        FrMotor.setPower(secondaryDiagonalSpeed - rotation);
-        FlMotor.setPower(primaryDiagonalSpeed + rotation);
-        BrMotor.setPower(primaryDiagonalSpeed - rotation);
+        BlMotor.setPower(secondaryDiagonalSpeed - rotation);
+        FrMotor.setPower(secondaryDiagonalSpeed + rotation);
+        FlMotor.setPower(primaryDiagonalSpeed - rotation);
+        BrMotor.setPower(primaryDiagonalSpeed + rotation);
+
 
 //        telemetry.addData("Primary:", primaryDiagonalSpeed);
 //        telemetry.addData("Secondary:", secondaryDiagonalSpeed);
@@ -132,36 +129,25 @@ public class Drive_TeleOp extends OpMode {
 
 
         //Intake and Conveyor belt Code
-        if (gamepad2.left_trigger > 0.3) {
+        if (gamepad2.left_stick_y >= 0.3) {
             Intake.setPower(0.9);
             ConveyorBelt.setPower(0.8);
-        } else if (gamepad2.right_trigger > 0.3) {
-            Intake.setPower(0.9);
-            ConveyorBelt.setPower(0.8);
+        } else if (gamepad2.left_stick_y <= -0.3) {
+            Intake.setPower(-0.9);
+            ConveyorBelt.setPower(-0.8);
         }else{
-            Intake.setPower(0);
-            ConveyorBelt.setPower(0);
-        }
-
-        if (gamepad2.left_bumper) {
-            Intake.setPower(-0.9);
-            ConveyorBelt.setPower(-0.8);
-        }else if (gamepad2.right_bumper) {
-            Intake.setPower(-0.9);
-            ConveyorBelt.setPower(-0.8);
-        }else {
             Intake.setPower(0);
             ConveyorBelt.setPower(0);
         }
 
         //Shooter code
 
-        if (gamepad2.left_stick_y >= 0.6) {
-            LeftShooter.setPower(-0.7);
-            RightShooter.setPower(-0.7);
-        }else if (gamepad2.left_stick_y <= -0.6) {
-            LeftShooter.setPower(0.7);
-            RightShooter.setPower(0.7);
+        if (gamepad2.right_stick_y >= 0.6) {
+            LeftShooter.setPower(-0.8);
+            RightShooter.setPower(-0.8);
+        }else if (gamepad2.right_stick_y <= -0.6) {
+            LeftShooter.setPower(0.8);
+            RightShooter.setPower(0.8);
         }else{
                 LeftShooter.setPower(0);
                 RightShooter.setPower(0);
@@ -199,34 +185,11 @@ public class Drive_TeleOp extends OpMode {
         }
 
 
-        if (gamepad1.right_trigger > 0.3) {
-
-            SlowMode();
-
-        }
-
 
 
     }
 
-    public void SlowMode () {
-        double speed = Math.sqrt(2) * Math.pow(Math.pow(gamepad1.left_stick_x, 4) + Math.pow(gamepad1.left_stick_y, 4), 0.5);
-        double angle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x);
-        double rotation = Math.signum(gamepad1.right_stick_x) * Math.pow(gamepad1.right_stick_x, 2);
 
-        float primaryDiagonalSpeed = (float) (speed * Math.sin(angle - (Math.PI / 4.0)));
-        float secondaryDiagonalSpeed = (float) (speed * Math.cos(angle - (Math.PI / 4.0)));
-
-//        BlMotor.setPower(secondaryDiagonalSpeed - rotation);
-//        FrMotor.setPower(secondaryDiagonalSpeed + rotation);
-//        FlMotor.setPower(primaryDiagonalSpeed - rotation);
-//        BrMotor.setPower(primaryDiagonalSpeed + rotation);
-        BlMotor.setPower(0.5 * secondaryDiagonalSpeed + rotation);
-        FrMotor.setPower(0.5 * secondaryDiagonalSpeed - rotation);
-        FlMotor.setPower(0.5 * primaryDiagonalSpeed + rotation);
-        BrMotor.setPower(0.5 * primaryDiagonalSpeed - rotation);
-
-    }
 }
 
 

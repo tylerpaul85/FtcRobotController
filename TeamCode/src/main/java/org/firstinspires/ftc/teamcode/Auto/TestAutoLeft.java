@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -16,30 +15,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="AutoBlueLeft")
-public class AutoBlueLeft extends LinearOpMode {
+@Autonomous(name="TestAutoLeft", group="chad")
+public class TestAutoLeft extends LinearOpMode {
+    //
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    //
-    public DcMotor FlMotor;
-    public DcMotor BlMotor;
-    public DcMotor FrMotor;
-    public DcMotor BrMotor;
-    public DcMotor WobbleFlipper;
-    public DcMotor Intake;
+    DcMotor frontleft;
+    DcMotor frontright;
+    DcMotor backleft;
+    DcMotor backright;
     public DcMotor LeftShooter;
     public DcMotor RightShooter;
-
-
-    public Servo WobbleGrabber;
     public CRServo ConveyorBelt;
-    public Servo IntakeFlipper;
+
 
     //28 * 20 / (2ppi * 4.125)
     Double width = 18.0; //inches
     Integer cpr = 28; //counts per rotation
-    Integer gearratio = 40;
+    Integer gearratio = 20;
     Double diameter = 4.125;
     Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
     Double bias = 0.8;//default 0.8
@@ -52,129 +46,45 @@ public class AutoBlueLeft extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
     //
-
-
-    public void runOpMode()throws InterruptedException {
-
-        telemetry.clearAll();
-        telemetry.addData("Status", "Auto Initialization In Progress");
-        telemetry.update();
+    public void runOpMode(){
         //
-//        initGyro();
+        initGyro();
         //
-        BlMotor = hardwareMap.get(DcMotor.class, "Backleft");
-        FlMotor = hardwareMap.get(DcMotor.class, "Frontleft");
-        BrMotor = hardwareMap.get(DcMotor.class, "Backright");
-        FrMotor = hardwareMap.get(DcMotor.class, "Frontright");
-        WobbleFlipper = hardwareMap.get(DcMotor.class, "WobbleFlipper");
-        Intake = hardwareMap.get(DcMotor.class, "Intake");
+        backleft = hardwareMap.get(DcMotor.class, "Backleft");
+        frontleft = hardwareMap.get(DcMotor.class, "Frontleft");
+        backright = hardwareMap.get(DcMotor.class, "Backright");
+        frontright = hardwareMap.get(DcMotor.class, "Frontright");
         LeftShooter = hardwareMap.get(DcMotor.class, "LeftShooter");
         RightShooter = hardwareMap.get(DcMotor.class, "RightShooter");
-
-
-        WobbleGrabber = hardwareMap.get(Servo.class, "WobbleGrabber");
         ConveyorBelt = hardwareMap.get(CRServo.class, "Convey");
-        IntakeFlipper = hardwareMap.get(Servo.class, "Flipper");
 
-        FrMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        BrMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontright.setDirection(DcMotorSimple.Direction.REVERSE);
+        backright.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        RingDetector detector = new RingDetector(this);
+        RightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //
-        FlMotor.setPower(0);
-        FrMotor.setPower(0);
-        BlMotor.setPower(0);
-        BrMotor.setPower(0);
-        WobbleFlipper.setPower(0);
-        ConveyorBelt.setPower(0);
+        LeftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         LeftShooter.setPower(0);
         RightShooter.setPower(0);
-
-        telemetry.clearAll();
-        telemetry.addData("Status", "Auto Initialization complete");
-        telemetry.update();
-
-
-        waitForStart();
-
-        int rings = detector.getDecision();
-        if (rings == 4) {
-
-            strafeToPosition(90, 0.8);
-            //
-            moveToPosition(6.8, 0.8);
-
-            sleep(3000);
-            //
-            moveToPosition(-17, 0.8);
-            //
-            strafeToPosition(-45, 0.8);
-//            turns robot
-            encoderDrive(0.8,-12,12,5000);
+        ConveyorBelt.setPower(0);
+        //
+        waitForStartify();
+        //
+//        strafeToPosition(101.8, 0.8);
+//	//
+//	moveToPosition(6.8, 0.8);
+//	//
+//	moveToPosition(-21.8, 0.8);
+//	//
+//	strafeToPosition(-48.8, 0.8);
+	//turns robot
+    encoderDrive(0.8,24,-24,5000);
 //
-            Shooter();
-        }
+//    Shooter();
 
-        if (rings == 0) {
-
-            strafeToPosition(35, 0.8);
-            //
-            moveToPosition(6.8, 0.8);
-
-            sleep(3000);
-            //
-            moveToPosition(-17, 0.8);
-            //
-            strafeToPosition(-5, 0.8);
-//            turns robot
-            encoderDrive(0.8,-12,12,5000);
-//
-            Shooter();
-
-        }
-
-
-        if (rings == 1) {
-
-
-            strafeToPosition(55, 0.8);
-
-            moveToPosition(-10,0.5);
-            //
-            sleep(3000);
-            //
-            strafeToPosition(-17.5, 0.8);
-//            turns robot
-            encoderDrive(0.8,-12,12,5000);
-//
-            Shooter();
-        }
-	//
     }
-
-    //Wobble arm
-    public void WobbleArm(double inches, double speed) {
-        int move =  (int)(Math.round(inches*conversion));
-        WobbleFlipper.setTargetPosition(WobbleFlipper.getCurrentPosition() + move);
-
-        WobbleFlipper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        WobbleFlipper.setPower(speed);
-    }
-
-    // Wobble Grab
-    public void WobbleGrab() {
-        WobbleGrabber.setPosition(180);
-    }
-
-    // Wobble UnGrab
-    public void WobbleUnGrab() {
-        WobbleGrabber.setPosition(0);
-    }
-
-
-
     //
     /*
     This function's purpose is simply to drive forward or backward.
@@ -184,34 +94,34 @@ public class AutoBlueLeft extends LinearOpMode {
         //
         int move = (int)(Math.round(inches*conversion));
         //
-        BlMotor.setTargetPosition(BlMotor.getCurrentPosition() + move);
-        FlMotor.setTargetPosition(FlMotor.getCurrentPosition() + move);
-        BrMotor.setTargetPosition(BrMotor.getCurrentPosition() + move);
-        FrMotor.setTargetPosition(FrMotor.getCurrentPosition() + move);
+        backleft.setTargetPosition(backleft.getCurrentPosition() + move);
+        frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
+        backright.setTargetPosition(backright.getCurrentPosition() + move);
+        frontright.setTargetPosition(frontright.getCurrentPosition() + move);
         //
-        FlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //
-        FlMotor.setPower(speed);
-        BlMotor.setPower(speed);
-        FrMotor.setPower(speed);
-        BrMotor.setPower(speed);
+        frontleft.setPower(speed);
+        backleft.setPower(speed);
+        frontright.setPower(speed);
+        backright.setPower(speed);
         //
-        while (FlMotor.isBusy() && FrMotor.isBusy() && BlMotor.isBusy() && BrMotor.isBusy()){
+        while (frontleft.isBusy() && frontright.isBusy() && backleft.isBusy() && backright.isBusy()){
             if (exit){
-                FrMotor.setPower(0);
-                FlMotor.setPower(0);
-                BrMotor.setPower(0);
-                BlMotor.setPower(0);
+                frontright.setPower(0);
+                frontleft.setPower(0);
+                backright.setPower(0);
+                backleft.setPower(0);
                 return;
             }
         }
-        FrMotor.setPower(0);
-        FlMotor.setPower(0);
-        BrMotor.setPower(0);
-        BlMotor.setPower(0);
+        frontright.setPower(0);
+        frontleft.setPower(0);
+        backright.setPower(0);
+        backleft.setPower(0);
         return;
     }
     //
@@ -310,21 +220,21 @@ public class AutoBlueLeft extends LinearOpMode {
                 telemetry.addData("second after", convertify(second));
                 telemetry.update();
             }
-            FlMotor.setPower(0);
-            FrMotor.setPower(0);
-            BlMotor.setPower(0);
-            BrMotor.setPower(0);
+            frontleft.setPower(0);
+            frontright.setPower(0);
+            backleft.setPower(0);
+            backright.setPower(0);
         }
         //</editor-fold>
         //
-        FlMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BlMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BrMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     //
     /*
@@ -335,29 +245,36 @@ public class AutoBlueLeft extends LinearOpMode {
         //
         int move = (int)(Math.round(inches * cpi * meccyBias));
         //
-        BlMotor.setTargetPosition(BlMotor.getCurrentPosition() - move);
-        FlMotor.setTargetPosition(FlMotor.getCurrentPosition() + move);
-        BrMotor.setTargetPosition(BrMotor.getCurrentPosition() + move);
-        FrMotor.setTargetPosition(FrMotor.getCurrentPosition() - move);
+        backleft.setTargetPosition(backleft.getCurrentPosition() - move);
+        frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
+        backright.setTargetPosition(backright.getCurrentPosition() + move);
+        frontright.setTargetPosition(frontright.getCurrentPosition() - move);
         //
-        FlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //
-        FlMotor.setPower(speed);
-        BlMotor.setPower(speed);
-        FrMotor.setPower(speed);
-        BrMotor.setPower(speed);
+        frontleft.setPower(speed);
+        backleft.setPower(speed);
+        frontright.setPower(speed);
+        backright.setPower(speed);
         //
-        while (FlMotor.isBusy() && FrMotor.isBusy() && BlMotor.isBusy() && BrMotor.isBusy()){}
-        FrMotor.setPower(0);
-        FlMotor.setPower(0);
-        BrMotor.setPower(0);
-        BlMotor.setPower(0);
+        while (frontleft.isBusy() && frontright.isBusy() && backleft.isBusy() && backright.isBusy()){}
+        frontright.setPower(0);
+        frontleft.setPower(0);
+        backright.setPower(0);
+        backleft.setPower(0);
         return;
     }
-
+    //
+    /*
+    A tradition within the Thunder Pengwins code, we always start programs with waitForStartify,
+    our way of adding personality to our programs.
+     */
+    public void waitForStartify(){
+        waitForStart();
+    }
     //
     /*
     These functions are used in the turnWithGyro function to ensure inputs
@@ -402,15 +319,15 @@ public class AutoBlueLeft extends LinearOpMode {
     encoder mode and turn.
      */
     public void turnWithEncoder(double input){
-        FlMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BlMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BrMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //
-        FlMotor.setPower(input);
-        BlMotor.setPower(input);
-        FrMotor.setPower(-input);
-        BrMotor.setPower(-input);
+        frontleft.setPower(input);
+        backleft.setPower(input);
+        frontright.setPower(-input);
+        backright.setPower(-input);
     }
 
     public void encoderDrive(double speed,
@@ -425,28 +342,28 @@ public class AutoBlueLeft extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = FlMotor.getCurrentPosition() + (int)(leftInches * cpi);
-            newRightFrontTarget = FrMotor.getCurrentPosition() + (int)(rightInches * cpi);
-            newLeftBackTarget  = BlMotor.getCurrentPosition() + (int) (leftInches * cpi);
-            newRightBackTarget = BrMotor.getCurrentPosition() + (int) (rightInches * cpi);
-            FlMotor.setTargetPosition(newLeftFrontTarget);
-            FrMotor.setTargetPosition(newRightFrontTarget);
-            BrMotor.setTargetPosition(newRightBackTarget);
-            BlMotor.setTargetPosition(newLeftBackTarget);
+            newLeftFrontTarget = frontleft.getCurrentPosition() + (int)(leftInches * cpi);
+            newRightFrontTarget = frontright.getCurrentPosition() + (int)(rightInches * cpi);
+            newLeftBackTarget  = backleft.getCurrentPosition() + (int) (leftInches * cpi);
+            newRightBackTarget = backright.getCurrentPosition() + (int) (rightInches * cpi);
+            frontleft.setTargetPosition(newLeftFrontTarget);
+            frontright.setTargetPosition(newRightFrontTarget);
+            backright.setTargetPosition(newRightBackTarget);
+            backleft.setTargetPosition(newLeftBackTarget);
 
 
             // Turn On RUN_TO_POSITION
-            FlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BlMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BrMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            FlMotor.setPower(Math.abs(speed));
-            FrMotor.setPower(Math.abs(speed));
-            BrMotor.setPower(Math.abs(speed));
-            BlMotor.setPower(Math.abs(speed));
+            frontleft.setPower(Math.abs(speed));
+            frontright.setPower(Math.abs(speed));
+            backright.setPower(Math.abs(speed));
+            backleft.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -456,40 +373,38 @@ public class AutoBlueLeft extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (FrMotor.isBusy() && FlMotor.isBusy() && BlMotor.isBusy() && BrMotor.isBusy())) {
+                    (frontright.isBusy() && frontleft.isBusy() && backleft.isBusy() && backright.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", newLeftBackTarget,  newLeftFrontTarget, newRightBackTarget, newRightFrontTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
-                        FlMotor.getCurrentPosition(),
-                        FrMotor.getCurrentPosition(),
-                        BrMotor.getCurrentPosition(),
-                        BlMotor.getCurrentPosition());
+                        frontleft.getCurrentPosition(),
+                        frontright.getCurrentPosition(),
+                        backright.getCurrentPosition(),
+                        backleft.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            FrMotor.setPower(0);
-            FlMotor.setPower(0);
-            BrMotor.setPower(0);
-            BlMotor.setPower(0);
+            frontright.setPower(0);
+            frontleft.setPower(0);
+            backright.setPower(0);
+            backleft.setPower(0);
             // Turn off RUN_TO_POSITION
-            FlMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            FrMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            BlMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            BrMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
     }
 
-    public void Shooter() {
+public void Shooter() {
         LeftShooter.setPower(1);
         RightShooter.setPower(1);
         ConveyorBelt.setPower(1);
         sleep(5000);
     }
-
     //
 }
-

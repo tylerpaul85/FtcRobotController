@@ -66,10 +66,14 @@ public class RingDetector {
         boolean bottomRing = false;
         if (boxValue < 200) {
             return 4;
-        } else if (boxValue < 280){
+
+
+        } else if (boxValue < 290){
             return 1;
+
         } else{
             return 0;
+
         }
     }
 
@@ -119,7 +123,7 @@ public class RingDetector {
             return new RGBColor(red, green, blue);
         }
 
-        private void sendTelemetry(){
+        public void sendTelemetry(){
             opMode.telemetry.addData("Top :" + " R " + box.getRed() + " G " + box.getGreen() + " B " + box.getBlue() + "Y" + box.getYellow() + "Decision: ", getDecision() );
             opMode.telemetry.update();
         }
