@@ -95,6 +95,8 @@ public class AutoBlueLeft extends LinearOpMode {
         telemetry.addData("Status", "Auto Initialization complete");
         telemetry.update();
 
+        WobbleGrabber.setPosition(1);
+
 
         waitForStart();
 
@@ -105,7 +107,15 @@ public class AutoBlueLeft extends LinearOpMode {
             //
             moveToPosition(6.8, 0.8);
 
+            sleep(1000);
+
+            WobbleMove(-60, 0.8);
+
             sleep(3000);
+
+            WobbleUnGrab();
+
+            sleep(1000);
             //
             moveToPosition(-17, 0.8);
             //
@@ -122,8 +132,15 @@ public class AutoBlueLeft extends LinearOpMode {
             //
             moveToPosition(6.8, 0.8);
 
+            sleep(1000);
+
+            WobbleMove(-60, 0.8);
+
             sleep(3000);
-            //
+
+            WobbleUnGrab();
+
+            sleep(1000);//
             moveToPosition(-17, 0.8);
             //
             strafeToPosition(-5, 0.8);
@@ -142,13 +159,23 @@ public class AutoBlueLeft extends LinearOpMode {
 
             moveToPosition(-10,0.5);
             //
+            sleep(1000);
+
+            WobbleMove(-60, 0.8);
+
             sleep(3000);
+
+            WobbleUnGrab();
+
+            sleep(1000);
+
             //
             strafeToPosition(-17.5, 0.8);
 //            turns robot
             encoderDrive(0.8,-12,12,5000);
 //
             Shooter();
+
         }
 	//
     }
@@ -165,7 +192,7 @@ public class AutoBlueLeft extends LinearOpMode {
 
     // Wobble Grab
     public void WobbleGrab() {
-        WobbleGrabber.setPosition(180);
+        WobbleGrabber.setPosition(1);
     }
 
     // Wobble UnGrab
@@ -173,7 +200,16 @@ public class AutoBlueLeft extends LinearOpMode {
         WobbleGrabber.setPosition(0);
     }
 
+    public void WobbleMove(double inches, double speed) {
+        int move =  (int)(Math.round(inches*conversion));
 
+        WobbleFlipper.setTargetPosition(WobbleFlipper.getCurrentPosition() + move);
+
+        WobbleFlipper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        WobbleFlipper.setPower(speed);
+
+    }
 
     //
     /*

@@ -162,15 +162,12 @@ public class Drive_TeleOp extends OpMode {
         //wobble Flipper
         if (gamepad2.dpad_up) {
             WobbleFlipper.setPower(1);
-        } else {
+        } else if (gamepad2.dpad_down) {
+            WobbleFlipper.setPower(-1);
+        }else {
             WobbleFlipper.setPower(0);
         }
 
-        if (gamepad2.dpad_down) {
-            WobbleFlipper.setPower(-1);
-        } else {
-            WobbleFlipper.setPower(0);
-        }
         //Wobble Grabber
         if (gamepad2.dpad_left) {
             WobbleGrabber.setPosition(1);
